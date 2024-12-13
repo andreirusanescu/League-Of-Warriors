@@ -3,9 +3,6 @@ package grid;
 import api.CellEntityType;
 import exceptions.ImpossibleMove;
 import entities.Character;
-import entities.Entity;
-import entities.abilities.*;
-import entities.Enemy;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -129,6 +126,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
      */
     public void goNorth() throws ImpossibleMove {
         if (currentCell.getX() == 0) {
+            System.out.println("You can't go North");
             throw new ImpossibleMove("You can't go North");
         } else {
             currentCell.setType(CellEntityType.VISITED);
@@ -143,6 +141,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
      */
     public void goSouth() throws ImpossibleMove {
         if (currentCell.getX() == rows - 1) {
+            System.out.println("You can't go South");
             throw new ImpossibleMove("You can't go South");
         } else {
             currentCell.setType(CellEntityType.VISITED);
@@ -157,6 +156,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
      */
     public void goWest() throws ImpossibleMove {
         if (currentCell.getY() == 0) {
+            System.out.println("You can't go West");
             throw new ImpossibleMove("You can't go West");
         } else {
             currentCell.setType(CellEntityType.VISITED);
@@ -171,6 +171,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
      */
     public void goEast() throws ImpossibleMove {
         if (currentCell.getY() == cols - 1) {
+            System.out.println("You can't go East");
             throw new ImpossibleMove("You can't go East");
         } else {
             currentCell.setType(CellEntityType.VISITED);
@@ -209,15 +210,6 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                     break;
                 case VISITED:
                     sb.append(YELLOW).append(cell).append(RESET).append("  ");
-                    break;
-                case SANCTUARY:
-                    sb.append(GREEN).append(cell).append(RESET).append("  ");
-                    break;
-                case ENEMY:
-                    sb.append(RED).append(cell).append(RESET).append("  ");
-                    break;
-                case PORTAL:
-                    sb.append(BLUE).append(cell).append(RESET).append("  ");
                     break;
                 default:
                     sb.append(cell).append("  ");

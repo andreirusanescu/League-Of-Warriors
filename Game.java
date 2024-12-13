@@ -79,11 +79,9 @@ public class Game {
             }
         } catch (InputMismatchException e) {
             System.out.println("Enter a valid direction (just the character)!");
-            input.nextLine();
         } catch (ImpossibleMove e) {
             System.out.println("Current coords: " + grid.getCurrentCell().getX()
                     + " " + grid.getCurrentCell().getY());
-            input.nextLine();
         }
 
         return false;
@@ -106,7 +104,6 @@ public class Game {
             return true;
         } catch (NumberFormatException e) {
             System.out.println(RED + "Enter a valid number!" + RESET);
-            input.nextLine();
         } catch (IndexOutOfBoundsException e) {
             System.out.println(RED + "Invalid index. Please choose a valid index." + RESET);
         }

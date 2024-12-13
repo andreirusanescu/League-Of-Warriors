@@ -40,12 +40,8 @@ public class Cell {
     public String toString() {
         switch (entityType) {
             case PLAYER: return "P";
-            case SANCTUARY: return "S";
-            case VOID: return "N";
             case VISITED: return "V";
-            case ENEMY: return "E";
-            case PORTAL: return "F";
-            default: return "";
+            default: return "N";
         }
     }
 }
