@@ -1,9 +1,8 @@
+package api;
+
 import accountInfo.Account;
 import accountInfo.Credentials;
-import entities.Character;
-import entities.characters.Mage;
-import entities.characters.Rogue;
-import entities.characters.Warrior;
+import entities.characters.Character;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -24,7 +23,7 @@ public class JsonInput {
             JSONArray accountsArray = (JSONArray) obj.get("accounts");
 
             ArrayList<Account> accounts = new ArrayList<>();
-            for (int i=0; i < accountsArray.length(); i++) {
+            for (int i = 0; i < accountsArray.length(); i++) {
                 JSONObject accountJson = (JSONObject) accountsArray.get(i);
                 // name, country, games_number
                 String name = (String) accountJson.get("name");
@@ -66,20 +65,28 @@ public class JsonInput {
                         int lvl = Integer.parseInt(level);
                         Integer experience = (Integer) charJson.get("experience");
 
-                        Character newCharacter = null;
-                        if (profession.equals("Warrior"))
-                            newCharacter = new Warrior(cname, experience, lvl);
-                        if (profession.equals("Rogue"))
-                            newCharacter = new Rogue(cname, experience, lvl);
-                        if (profession.equals("Mage"))
-                            newCharacter = new Mage(cname, experience, lvl);
-                        characters.add(newCharacter);
+                        CharacterType characterType = null;
+                        switch (profession) {
+                            case "Warrior":
+                                characterType = CharacterType.Warrior;
+                                break;
+                            case "Rogue":
+                                characterType = CharacterType.Rogue;
+                                break;
+                            case "Mage":
+                                characterType = CharacterType.Mage;
+                                break;
+                        }
+                        characters.add(CharacterFactory.getCharacter(characterType, cname, lvl, experience));
                     }
                 } catch (JSONException e) {
                     System.out.println("! This account doesn't have characters !");
                 }
 
-                Account.Information information = new Account.Information(credentials, favoriteGames, name, country);
+//                Account.Information information = new Account.Information(credentials, favoriteGames, name, country);
+                Information information = new Information.Builder().credentials(credentials)
+                                                                .favoriteGames(favoriteGames).name(name)
+                                                                .country(country).build();
                 Account account = new Account(characters, gamesNumber, information);
                 accounts.add(account);
             }

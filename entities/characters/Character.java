@@ -1,7 +1,8 @@
-package entities;
+package entities.characters;
 
+import api.CharacterType;
+import api.Information;
 import entities.abilities.Spell;
-import exceptions.InvalidCommandException;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -9,20 +10,16 @@ import java.util.Random;
 import java.util.Scanner;
 
 public abstract class Character extends Entity {
-    private String name;
-    private int experience;
-    private int level;
     private int strength;
     private int charisma;
     private int dexterity;
     private final int maxLevel = 20;
     private final int experienceBound = 100;
 
-    public Character(String name, int experience, int level) {
-        super(100, 100);
-        this.name = name;
-        this.experience = experience;
-        this.level = level;
+    public Character(CharacterType characterType, String name, int experience, int level, int damage) {
+        information = new Information.Builder().name(name).role(characterType)
+                .experience(experience).level(level).health(100).blessing(100)
+                .damage(damage).build();
         abilities = new ArrayList<Spell>();
         addAbilities();
     }
@@ -40,8 +37,8 @@ public abstract class Character extends Entity {
      * Increases experience with @param experience
      */
     public void increaseExperience(int experience) {
-        this.experience += experience;
-        System.out.println("Increased experience to: " + GREEN + this.experience + RESET);
+        information.setExperience(information.getExperience() + experience);
+        System.out.println("Increased experience to: " + GREEN + information.getExperience() + RESET);
     }
 
     /**
@@ -101,18 +98,9 @@ public abstract class Character extends Entity {
         if (ability != null && ability.getCost() < getBlessing()) {
             /* Remove ability after using it */
             abilities.remove(ability);
-            if (target.isImmuneToAbility(ability)) {
-                System.out.println("Target is immune to your spells");
-                return;
-            }
-
-            /* Not immune */
-            setBlessing(getBlessing() - ability.getCost());
-
-            /* Initial damage + ability's damage */
-            target.receiveDamage(getDamage() + ability.getDamage());
+            target.accept(ability);
         } else if (ability != null) {
-            System.out.println("You do not have enough blessing");
+            System.out.println("You do not have any abilities left");
             System.out.println("Default Attack");
             attackEnemy(target);
         }
@@ -132,7 +120,7 @@ public abstract class Character extends Entity {
      * Increases normal attack damage by 30%
      */
     public void increaseNormalDamage() {
-        setNormalDamage(getNormalDamage() + (int) (0.3 * getNormalDamage()));
+        information.setDamage(information.getDamage() + (int) (0.3 * getNormalDamage()));
     }
 
     /**
@@ -193,8 +181,8 @@ public abstract class Character extends Entity {
             System.out.println("Regenerated blessing: " + GREEN
                     + getBlessing() + RESET);
             increaseExperience(new Random().nextInt(100));
-            if (this.experience >= this.experienceBound) {
-                this.experience -= this.experienceBound;
+            if (information.getExperience() >= this.experienceBound) {
+                information.setExperience(information.getExperience() - experienceBound);
                 increaseAttributes();
                 increaseNormalDamage();
                 System.out.println("Increased damage to " + BLUE
@@ -219,23 +207,23 @@ public abstract class Character extends Entity {
     }
 
     public String getName() {
-        return name;
+        return information.getName();
     }
 
     public int getExperience() {
-        return experience;
+        return information.getExperience();
     }
 
     public void setExperience(int experience) {
-        this.experience = experience;
+        information.setExperience(experience);
     }
 
     public int getLevel() {
-        return level;
+        return information.getLevel();
     }
 
     public void setLevel(int level) {
-        this.level = level;
+        information.setLevel(level);
     }
 
     public int getExperienceBound() {

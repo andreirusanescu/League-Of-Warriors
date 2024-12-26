@@ -1,13 +1,13 @@
 package entities.characters;
 
-import entities.Character;
+import api.Visitor;
+import api.CharacterType;
 
 public class Mage extends Character {
     public Mage(String name, int experience, int level) {
-        super(name, experience, level);
+        super(CharacterType.Mage, name, experience, level, 30);
         setAttributes(8, 20, 12);
         setImmunity(false, true, false);
-        setNormalDamage(30);
     }
     @Override
     public void receiveDamage(int damage) {
@@ -33,5 +33,10 @@ public class Mage extends Character {
             damage *= 2;
         }
         return damage;
+    }
+
+    @Override
+    public void accept(Visitor<Entity> visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,20 +1,16 @@
-package entities;
+package entities.characters;
 
-import api.Battle;
+import api.*;
 import entities.abilities.*;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class Entity implements Battle {
+public abstract class Entity implements Battle, Element<Entity> {
     ArrayList<Spell> abilities;
-    private int healthBar;
+    protected Information information;
     private final int maxHealth;
-    private int blessing;
     private final int maxBlessing;
-
-    /* Normal damage value */
-    private int normalDamage;
 
     /* Immunity values */
     private boolean fire;
@@ -30,40 +26,36 @@ public abstract class Entity implements Battle {
     public static final String GREEN = "\u001B[32m";
     public static final String BLUE = "\u001B[34m";
 
-    public Entity(int health, int blessing) {
-        this.healthBar = health;
-        this.blessing = blessing;
-        this.maxHealth = health;
-        this.maxBlessing = blessing;
+    public Entity() {
+        this.maxHealth = 100;
+        this.maxBlessing = 100;
         this.alive = true;
     }
 
     public abstract void receiveDamage(int damage);
     public abstract int getDamage();
     public abstract void useAbility(Entity target, boolean testing);
+    public abstract void accept(Visitor<Entity> visitor);
 
     /**
      * Getter and setter for default attack
      */
     public int getNormalDamage() {
-        return normalDamage;
-    }
-    public void setNormalDamage(int damage) {
-        this.normalDamage = damage;
+        return information.getDamage();
     }
 
     /**
      * Regenerates healthBar with @param health
      */
     public void regenerateHealth(int health) {
-        this.healthBar = Math.min(healthBar + health, maxHealth);
+        information.setHealth(Math.min(maxHealth, information.getHealth() + health));
     }
 
     /**
      * Regenerates blessing with @param blessing
      */
     public void regenerateBlessing(int blessing) {
-        this.blessing = Math.min(this.blessing + blessing, maxBlessing);
+        information.setBlessing(Math.min(maxBlessing, information.getBlessing() + blessing));
     }
 
     /**
@@ -134,11 +126,11 @@ public abstract class Entity implements Battle {
     }
 
     public void setHealthBar(int health) {
-        this.healthBar = health;
+        information.setHealth(health);
     }
 
     public int getHealthBar() {
-        return healthBar;
+        return information.getHealth();
     }
 
     public int getMaxHealth() {
@@ -150,10 +142,14 @@ public abstract class Entity implements Battle {
     }
 
     public int getBlessing() {
-        return blessing;
+        return information.getHealth();
     }
 
     public void setBlessing(int blessing) {
-        this.blessing = blessing;
+        information.setBlessing(blessing);
+    }
+
+    public CharacterType getCharacterType() {
+        return information.getRole();
     }
 }

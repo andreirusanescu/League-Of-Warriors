@@ -2,7 +2,7 @@ package grid;
 
 import api.CellEntityType;
 import exceptions.ImpossibleMove;
-import entities.Character;
+import entities.characters.Character;
 
 import java.util.ArrayList;
 import java.util.Random;

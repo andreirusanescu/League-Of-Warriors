@@ -1,5 +1,8 @@
-package entities;
+package entities.characters;
 
+import api.CharacterType;
+import api.Information;
+import api.Visitor;
 import entities.abilities.Spell;
 
 import java.util.ArrayList;
@@ -7,9 +10,9 @@ import java.util.Random;
 
 public class Enemy extends Entity {
     public Enemy(int damage) {
-        super(100, 100);
         Random rand = new Random();
-        setNormalDamage(rand.nextInt(damage));
+        information = new Information.Builder().health(100).blessing(100)
+                .role(CharacterType.Enemy).damage(rand.nextInt(damage)).build();
         setImmunity(rand.nextBoolean(), rand.nextBoolean(), rand.nextBoolean());
         abilities = new ArrayList<Spell>();
         addAbilities();
@@ -55,15 +58,8 @@ public class Enemy extends Entity {
         else
             ability = chooseAbility(true);
         if (ability != null && ability.getCost() < getBlessing()) {
-            if (target.isImmuneToAbility(ability)) {
-                System.out.println("You are immune to enemy's spells");
-                return;
-            }
-            // Not immune
-            setBlessing(getBlessing() - ability.getCost());
-            // Initial damage + ability's damage
             abilities.remove(ability);
-            target.receiveDamage(getDamage() + ability.getDamage());
+            target.accept(ability);
         } else if (ability != null) {
             System.out.println("Enemy does not have enough blessing");
             System.out.println("Default Attack");
@@ -80,5 +76,10 @@ public class Enemy extends Entity {
         if (target.isAlive()) {
             System.out.println("You are on " +  RED + target.getHealthBar() + RESET + " life");
         }
+    }
+
+    @Override
+    public void accept(Visitor<Entity> visitor) {
+        visitor.visit(this);
     }
 }

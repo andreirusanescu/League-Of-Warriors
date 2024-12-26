@@ -2,7 +2,8 @@ import exceptions.AccountNotFoundException;
 
 public class Test {
     public static void main(String[] args) {
-        Game g  = new Game(true);
+        Game g  = Game.getInstance();
+        g.test();
         try {
             System.out.println("Running in testing mode");
             g.run();

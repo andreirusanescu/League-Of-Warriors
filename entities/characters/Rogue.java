@@ -1,13 +1,13 @@
 package entities.characters;
 
-import entities.Character;
+import api.CharacterType;
+import api.Visitor;
 
 public class Rogue extends Character {
     public Rogue(String name, int experience, int level) {
-        super(name, experience, level);
+        super(CharacterType.Rogue, name, experience, level, 30);
         setAttributes(10, 10, 20);
         setImmunity(false, false, true);
-        setNormalDamage(30);
     }
 
     @Override
@@ -34,5 +34,11 @@ public class Rogue extends Character {
             damage *= 2;
         }
         return damage;
+    }
+
+
+    @Override
+    public void accept(Visitor<Entity> visitor) {
+        visitor.visit(this);
     }
 }

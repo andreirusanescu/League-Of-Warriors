@@ -1,8 +1,9 @@
 import accountInfo.Account;
 import accountInfo.Credentials;
 import api.CellEntityType;
-import entities.Character;
-import entities.Enemy;
+import api.JsonInput;
+import entities.characters.Character;
+import entities.characters.Enemy;
 import exceptions.AccountNotFoundException;
 import exceptions.ImpossibleMove;
 import exceptions.InvalidCommandException;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
+    private static Game gameInstance;
     private ArrayList<Account> accounts;
     private Grid grid;
 
@@ -39,8 +41,19 @@ public class Game {
     /**
      * @param testing used for testing mode
      */
-    public Game(boolean testing) {
+    private Game(boolean testing) {
         this.testing = testing;
+    }
+
+    public static Game getInstance() {
+        if (gameInstance == null) {
+            gameInstance = new Game(false);
+        }
+        return gameInstance;
+    }
+
+    public void test() {
+        testing = true;
     }
 
     public boolean isTesting() {
