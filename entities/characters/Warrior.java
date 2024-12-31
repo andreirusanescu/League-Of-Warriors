@@ -1,7 +1,7 @@
 package entities.characters;
 
 import api.CharacterType;
-import api.Visitor;
+import patterns.Visitor;
 
 public class Warrior extends Character {
     public Warrior(String name, int experience, int level) {
@@ -19,7 +19,7 @@ public class Warrior extends Character {
 
         setHealthBar(getHealthBar() - damage);
         System.out.println("You received " + RED + damage + RESET + " damage");
-        if (getHealthBar() < 0) {
+        if (getHealthBar() <= 0) {
             System.out.println(RED + "Warrior " + getName() + " died." + RESET);
             setHealthBar(0);
             setAlive(false);
@@ -39,5 +39,10 @@ public class Warrior extends Character {
     @Override
     public void accept(Visitor<Entity> visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public String getImagePath() {
+        return "src/images/warrior.png";
     }
 }

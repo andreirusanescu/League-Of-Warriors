@@ -1,14 +1,14 @@
 package entities.abilities;
 
-import api.Information;
-import api.Visitor;
+import patterns.Information;
+import patterns.Visitor;
 import entities.characters.Entity;
 
 public abstract class Spell implements Visitor<Entity> {
     protected Information information;
 
     public Spell(int damage, int cost) {
-        this.information = new Information.Builder().damage(damage).blessing(cost).build();
+        this.information = new Information.Builder().name(getClass().getSimpleName()).damage(damage).blessing(cost).build();
     }
 
     public int getDamage() {
@@ -17,6 +17,7 @@ public abstract class Spell implements Visitor<Entity> {
     public int getCost() {
         return information.getBlessing();
     }
+    public abstract String getIcon();
 
     @Override
     public String toString() {
@@ -24,6 +25,11 @@ public abstract class Spell implements Visitor<Entity> {
                 + " [damage = " + information.getDamage() + ", cost = " + information.getBlessing() + "]";
     }
 
-    @Override
-    public abstract void visit(Entity entity);
+    public String getInformation() {
+        return "<html>Name: " + information.getName()
+                + "<br>Mana cost: " + information.getBlessing()
+                + "<br>Damage: " + information.getDamage()
+                + "</html>";
+    }
+
 }

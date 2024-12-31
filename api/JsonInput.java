@@ -6,6 +6,8 @@ import entities.characters.Character;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+import patterns.CharacterFactory;
+import patterns.Information;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -83,7 +85,6 @@ public class JsonInput {
                     System.out.println("! This account doesn't have characters !");
                 }
 
-//                Account.Information information = new Account.Information(credentials, favoriteGames, name, country);
                 Information information = new Information.Builder().credentials(credentials)
                                                                 .favoriteGames(favoriteGames).name(name)
                                                                 .country(country).build();

@@ -1,6 +1,6 @@
 package accountInfo;
 
-import api.Information;
+import patterns.Information;
 import entities.characters.Character;
 
 import java.util.ArrayList;

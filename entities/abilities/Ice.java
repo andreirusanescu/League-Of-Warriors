@@ -17,6 +17,11 @@ public class Ice extends Spell {
     }
 
     @Override
+    public String getIcon() {
+        return "src/images/ice.png";
+    }
+
+    @Override
     public void visit(Entity entity) {
         switch (entity.getCharacterType()){
             case Enemy:
@@ -32,10 +37,6 @@ public class Ice extends Spell {
                 }
                 break;
         }
-        /* Not immune */
-        entity.setBlessing(entity.getBlessing() - getCost());
-
-        /* Initial damage + ability's damage */
-        entity.receiveDamage(entity.getDamage() + getDamage());
+        entity.receiveDamage(getDamage());
     }
 }

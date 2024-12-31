@@ -8,7 +8,6 @@ import exceptions.AccountNotFoundException;
 import exceptions.ImpossibleMove;
 import exceptions.InvalidCommandException;
 import grid.Grid;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -60,6 +59,35 @@ public class Game {
         return testing;
     }
 
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public Account getSelectedAccount() {
+        return selectedAccount;
+    }
+
+    public void setSelectedAccount(Account selectedAccount) {
+        this.selectedAccount = selectedAccount;
+    }
+    public void setCurrentCharacter(Character currentCharacter) {
+        this.currentCharacter = currentCharacter;
+    }
+
+    public void setGrid(grid.Grid grid) {
+        this.grid = grid;
+    }
+
+    public ArrayList<Account> getAccounts() {
+        if (accounts == null) {
+            accounts = JsonInput.deserializeAccounts();
+        }
+        return accounts;
+    }
+
+    public Character getCurrentCharacter() {
+        return currentCharacter;
+    }
     /**
      * Shows the list of directions for the
      * current cell or EXIT.
@@ -127,10 +155,10 @@ public class Game {
      * Fights enemy until one dies.
      * @return done if the user died (true)
      */
-    private boolean fightEnemy() {
+    public boolean fightEnemy() {
         System.out.println("Encountered an " + RED + "enemy" + RESET + "!\nAttacking...");
         boolean done = false;
-        Enemy enemy = new Enemy(3 * currentCharacter.getNormalDamage() / 2);
+        Enemy enemy = new Enemy(3 * currentCharacter.getNormalDamage() / 2, currentCharacter.getMaxHealth());
         while (true) {
             currentCharacter.attack(enemy, testing);
             if (enemy.isAlive())
@@ -152,6 +180,9 @@ public class Game {
         if (done) {
             currentCharacter.regenerateHealth(currentCharacter.getMaxHealth());
             currentCharacter.regenerateBlessing(currentCharacter.getMaxBlessing());
+            currentCharacter.getAbilities().removeAll(currentCharacter.getAbilities());
+            currentCharacter.addAbilities();
+
             System.out.println(RED + "GAME OVER" + RESET);
             System.out.println("Start NEW GAME or EXIT");
             if (testing) {
@@ -185,18 +216,6 @@ public class Game {
         System.out.println(BLUE + "Portal..." + RESET);
         currentCharacter.increaseExperience(currentCharacter.getLevel() * 5);
 
-        /* Increase stats only when character gained enough experience */
-        if (currentCharacter.getExperience() > currentCharacter.getExperienceBound()) {
-            currentCharacter.setExperience(currentCharacter.getExperience() - currentCharacter.getExperienceBound());
-            currentCharacter.increaseAttributes();
-            currentCharacter.increaseNormalDamage();
-            System.out.println("Increased damage to " + BLUE
-                    + currentCharacter.getNormalDamage() + RESET);
-            System.out.println("Increased strength to " + currentCharacter.getStrength()
-                                        + ", charisma to " + currentCharacter.getCharisma()
-                                        + ", dexterity to " + currentCharacter.getDexterity());
-        }
-        currentCharacter.setLevel(currentCharacter.getLevel() + 1);
         selectedAccount.setNumberOfGames(selectedAccount.getNumberOfGames() + 1);
         grid.getCurrentCell().setType(CellEntityType.PLAYER);
     }

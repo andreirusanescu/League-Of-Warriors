@@ -1,4 +1,4 @@
-package api;
+package patterns;
 
 import entities.characters.Entity;
 

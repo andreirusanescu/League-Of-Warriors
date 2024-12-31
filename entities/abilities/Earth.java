@@ -17,25 +17,29 @@ public class Earth extends Spell {
     }
 
     @Override
+    public String getIcon() {
+        return "src/images/earth.png";
+    }
+
+
+    @Override
     public void visit(Entity entity) {
         switch (entity.getCharacterType()){
             case Enemy:
-                if (entity.isImmuneToAbility(this)) {
-                    System.out.println("You are immune to enemy's spells");
-                    return;
-                }
-                break;
-            default:
                 if (entity.isImmuneToAbility(this)) {
                     System.out.println("Target is immune to your spells");
                     return;
                 }
                 break;
+            case Mage:
+            case Rogue:
+            case Warrior:
+                if (entity.isImmuneToAbility(this)) {
+                    System.out.println("You are immune to enemy's spells");
+                    return;
+                }
+                break;
         }
-        /* Not immune */
-        entity.setBlessing(entity.getBlessing() - getCost());
-
-        /* Initial damage + ability's damage */
-        entity.receiveDamage(entity.getDamage() + getDamage());
+        entity.receiveDamage(getDamage());
     }
 }

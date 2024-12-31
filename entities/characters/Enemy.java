@@ -1,20 +1,21 @@
 package entities.characters;
 
 import api.CharacterType;
-import api.Information;
-import api.Visitor;
+import patterns.Information;
+import patterns.Visitor;
 import entities.abilities.Spell;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Enemy extends Entity {
-    public Enemy(int damage) {
+    public Enemy(int damage, int health) {
         Random rand = new Random();
-        information = new Information.Builder().health(100).blessing(100)
+        information = new Information.Builder().health(health).blessing(100)
                 .role(CharacterType.Enemy).damage(rand.nextInt(damage)).build();
+        System.out.println("Health " + information.getHealth() + ", Mana: " + information.getBlessing());
         setImmunity(rand.nextBoolean(), rand.nextBoolean(), rand.nextBoolean());
-        abilities = new ArrayList<Spell>();
+        abilities = new ArrayList<>();
         addAbilities();
     }
 
@@ -23,7 +24,7 @@ public class Enemy extends Entity {
         if (!new Random().nextBoolean()) {
             System.out.println("Enemy received " + RED + damage  + RESET + " damage");
             setHealthBar(getHealthBar() - damage);
-            if (getHealthBar() < 0) {
+            if (getHealthBar() <= 0) {
                 setHealthBar(0);
                 setAlive(false);
             }
@@ -57,7 +58,8 @@ public class Enemy extends Entity {
             ability = chooseAbility();
         else
             ability = chooseAbility(true);
-        if (ability != null && ability.getCost() < getBlessing()) {
+        if (ability != null && ability.getCost() <= getBlessing()) {
+            setBlessing(getBlessing() - ability.getCost());
             abilities.remove(ability);
             target.accept(ability);
         } else if (ability != null) {

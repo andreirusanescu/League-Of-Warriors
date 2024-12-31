@@ -1,7 +1,7 @@
 package entities.characters;
 
 import api.CharacterType;
-import api.Information;
+import patterns.Information;
 import entities.abilities.Spell;
 
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ public abstract class Character extends Entity {
     private int charisma;
     private int dexterity;
     private final int maxLevel = 20;
-    private final int experienceBound = 100;
+    private final int experienceBound = 150;
 
     public Character(CharacterType characterType, String name, int experience, int level, int damage) {
         information = new Information.Builder().name(name).role(characterType)
                 .experience(experience).level(level).health(100).blessing(100)
-                .damage(damage).build();
-        abilities = new ArrayList<Spell>();
+                .damage(damage).enemiesKilled(0).build();
+        abilities = new ArrayList<>();
         addAbilities();
     }
 
@@ -30,6 +30,7 @@ public abstract class Character extends Entity {
         this.dexterity = dexterity;
     }
 
+    public abstract String getImagePath();
     public abstract void receiveDamage(int damage);
     public abstract int getDamage();
 
@@ -37,8 +38,24 @@ public abstract class Character extends Entity {
      * Increases experience with @param experience
      */
     public void increaseExperience(int experience) {
-        information.setExperience(information.getExperience() + experience);
-        System.out.println("Increased experience to: " + GREEN + information.getExperience() + RESET);
+        setExperience(getExperience() + experience);
+        /* Increase stats only when character gained enough experience */
+        while (getExperience() >= getExperienceBound()) {
+            setExperience(getExperience() - getExperienceBound());
+            if (getLevel() < maxLevel) {
+                increaseAttributes();
+                increaseNormalDamage();
+                System.out.println("Increased damage to " + BLUE
+                        + getNormalDamage() + RESET);
+                System.out.println("Increased strength to " + getStrength()
+                        + ", charisma to " + getCharisma()
+                        + ", dexterity to " + getDexterity());
+                setLevel(getLevel() + 1);
+                System.out.println("Increased level to: " + getLevel());
+            }
+        }
+
+        System.out.println("Increased experience to: " + GREEN + getExperience() + RESET);
     }
 
     /**
@@ -96,7 +113,8 @@ public abstract class Character extends Entity {
             ability = chooseAbility();
 
         if (ability != null && ability.getCost() < getBlessing()) {
-            /* Remove ability after using it */
+            // Not immune
+            setBlessing(getBlessing() - ability.getCost());
             abilities.remove(ability);
             target.accept(ability);
         } else if (ability != null) {
@@ -111,16 +129,16 @@ public abstract class Character extends Entity {
      * when experience hits experienceBound.
      */
     public void increaseAttributes() {
-        this.strength = this.strength + (int) (this.strength * 0.2);
-        this.dexterity = this.dexterity + (int) (this.dexterity * 0.2);
-        this.charisma = this.charisma + (int) (this.charisma * 0.2);
+        strength = strength + (int) (strength * 0.2);
+        dexterity = dexterity + (int) (dexterity * 0.2);
+        charisma = charisma + (int) (charisma * 0.2);
     }
 
     /**
-     * Increases normal attack damage by 30%
+     * Increases normal attack damage by 5%
      */
     public void increaseNormalDamage() {
-        information.setDamage(information.getDamage() + (int) (0.3 * getNormalDamage()));
+        information.setDamage(information.getDamage() + (int) (0.05 * getNormalDamage()));
     }
 
     /**
@@ -128,7 +146,7 @@ public abstract class Character extends Entity {
      * Character attacks @param enemy
      */
     public void attack(Entity enemy, boolean testing) {
-        System.out.println("Current health and blessing: "
+        System.out.println("Current health and mana: "
                 + getHealthBar() + " " + getBlessing());
         System.out.println("Enemy's health: " + enemy.getHealthBar());
         if (!testing) {
@@ -180,14 +198,7 @@ public abstract class Character extends Entity {
             regenerateBlessing(getMaxBlessing());
             System.out.println("Regenerated blessing: " + GREEN
                     + getBlessing() + RESET);
-            increaseExperience(new Random().nextInt(100));
-            if (information.getExperience() >= this.experienceBound) {
-                information.setExperience(information.getExperience() - experienceBound);
-                increaseAttributes();
-                increaseNormalDamage();
-                System.out.println("Increased damage to " + BLUE
-                        + getNormalDamage() + RESET);
-            }
+            increaseExperience(new Random().nextInt(getExperienceBound()));
         } else {
             System.out.println("Enemy is on " + RED
                     + enemy.getHealthBar() + RESET + " life");
@@ -235,5 +246,17 @@ public abstract class Character extends Entity {
         return getClass().getSimpleName() + ": " + getName() + ", experience "
                 + getExperience() + ", level " + getLevel()  + ", strength " + getStrength()
                 + ", charisma " + getCharisma() + ", dexterity " + getDexterity();
+    }
+
+    public void setEnemiesKilled(Integer enemiesKilled) {
+        information.setEnemiesKilled(enemiesKilled);
+    }
+
+    public Integer getEnemiesKilled() {
+        return information.getEnemiesKilled();
+    }
+
+    public CharacterType getRole() {
+        return information.getRole();
     }
 }

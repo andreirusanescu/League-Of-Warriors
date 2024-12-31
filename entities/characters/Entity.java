@@ -2,6 +2,9 @@ package entities.characters;
 
 import api.*;
 import entities.abilities.*;
+import patterns.Element;
+import patterns.Information;
+import patterns.Visitor;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -9,8 +12,8 @@ import java.util.Random;
 public abstract class Entity implements Battle, Element<Entity> {
     ArrayList<Spell> abilities;
     protected Information information;
-    private final int maxHealth;
-    private final int maxBlessing;
+    private int maxHealth;
+    private int maxBlessing;
 
     /* Immunity values */
     private boolean fire;
@@ -36,6 +39,10 @@ public abstract class Entity implements Battle, Element<Entity> {
     public abstract int getDamage();
     public abstract void useAbility(Entity target, boolean testing);
     public abstract void accept(Visitor<Entity> visitor);
+
+    public ArrayList<Spell> getAbilities() {
+        return abilities;
+    }
 
     /**
      * Getter and setter for default attack
@@ -102,11 +109,11 @@ public abstract class Entity implements Battle, Element<Entity> {
 
     private Spell randomSpell() {
         Random rand = new Random();
-        switch (rand.nextInt(3)) {
-            case 0: return new Fire();
-            case 1: return new Ice();
-            default: return new Earth();
-        }
+        return switch (rand.nextInt(3)) {
+            case 0 -> new Fire();
+            case 1 -> new Ice();
+            default -> new Earth();
+        };
     }
 
     /**
@@ -141,8 +148,16 @@ public abstract class Entity implements Battle, Element<Entity> {
         return maxBlessing;
     }
 
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void setMaxBlessing(int maxBlessing) {
+        this.maxBlessing = maxBlessing;
+    }
+
     public int getBlessing() {
-        return information.getHealth();
+        return information.getBlessing();
     }
 
     public void setBlessing(int blessing) {
@@ -151,5 +166,8 @@ public abstract class Entity implements Battle, Element<Entity> {
 
     public CharacterType getCharacterType() {
         return information.getRole();
+    }
+    public String getInformation() {
+        return "<html>Health: " + information.getHealth() + "<br>Mana: " + information.getBlessing() + "</html>";
     }
 }

@@ -1,6 +1,7 @@
-package api;
+package patterns;
 
 import accountInfo.Credentials;
+import api.CharacterType;
 
 import java.util.SortedSet;
 
@@ -80,7 +81,6 @@ public class Information {
             this.country = country;
             return this;
         }
-
         public Information build() {
             Information information = new Information();
             information.name = name;
@@ -144,5 +144,9 @@ public class Information {
     }
     public void setDamage(Integer damage) {
         this.damage = damage;
+    }
+
+    public void setEnemiesKilled(Integer enemiesKilled) {
+        this.enemiesKilled = enemiesKilled;
     }
 }
