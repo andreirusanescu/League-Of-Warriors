@@ -1,5 +1,3 @@
-# 323CC Rusanescu Andrei-Marian
-
 ## 1. Singleton Pattern
 * Pattern-ul este aplicat clasei ```Game```, care contine o instanta a jocului in interiorul sau, initial nula.
 * Constructorul este privat si este apelat de metoda getInstance(), care creeaza un obiect nou prin ```lazy instantiation``` sau returneaza obiectul existent.
